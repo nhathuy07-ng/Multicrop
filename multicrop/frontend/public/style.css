@@ -1,3 +1,7 @@
+:root {
+    --wails-drop-target: none
+}
+
 body {
     width: 100%;
     height: 100%;
@@ -9,3 +13,14 @@ h1 {
     width: min-content;
 }
 
+.drop-zone {
+    border: 2px dashed #ccc;
+    padding: 40px;
+    text-align: center;
+    transition: all 0.2s ease;
+}
+
+.drop-zone.file-drop-target-active {
+    border-color: #007bff;
+    background-color: rgba(0, 123, 255, 0.1);
+}
