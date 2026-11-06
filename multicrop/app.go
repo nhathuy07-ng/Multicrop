@@ -19,14 +19,23 @@ func NewApp() *App {
 
 // interface{} is an empty interface, meaning all data types can be stored
 // ...param means variadic parameters (much like python's *args)
-func onFileDropped(eventData ...interface{}) {
+func onFileDropped(app *App, eventData ...interface{}) {
 	file := eventData[2].([]string)[0]
 	fmt.Println(file)
+	filepath, _ := GenerateWebpProxy(file)
+
+	runtime.MessageDialog(app.ctx, runtime.MessageDialogOptions{
+		Type:    runtime.InfoDialog,
+		Message: fmt.Sprintf("File parsed: %s", filepath),
+	})
 }
 
 // startup is called when the app starts. The context is saved
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
-	runtime.EventsOn(ctx, "wails:file-drop", onFileDropped)
+	runtime.EventsOn(ctx, "wails:file-drop", func(optionalData ...interface{}) {
+		onFileDropped(a, optionalData...)
+	})
+
 }
