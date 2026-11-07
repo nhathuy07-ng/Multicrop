@@ -18,11 +18,18 @@ func NewApp() *App {
 }
 
 // interface{} is an empty interface, meaning all data types can be stored
-// ...param means variadic parameters (much like python's *args)
-func onFileDropped(app *App, eventData ...interface{}) {
+func onFileDropped(app *App, eventData []any) {
 	file := eventData[2].([]string)[0]
 	fmt.Println(file)
-	filepath, _ := GenerateWebpProxy(file)
+	filepath, err := GenerateWebpProxy(file)
+
+	if err != nil {
+		runtime.MessageDialog(app.ctx, runtime.MessageDialogOptions{
+			Type:    runtime.ErrorDialog,
+			Message: fmt.Sprintf("Error while opening file: %s", err),
+		})
+		return
+	}
 
 	runtime.MessageDialog(app.ctx, runtime.MessageDialogOptions{
 		Type:    runtime.InfoDialog,
@@ -35,8 +42,8 @@ func onFileDropped(app *App, eventData ...interface{}) {
 func (a *App) startup(ctx context.Context) {
 
 	a.ctx = ctx
-	runtime.EventsOn(ctx, "wails:file-drop", func(optionalData ...interface{}) {
-		onFileDropped(a, optionalData...)
+	runtime.EventsOn(ctx, "wails:file-drop", func(optionalData ...any) {
+		onFileDropped(a, optionalData)
 	})
 
 }

@@ -15,12 +15,12 @@ the frontend.
 */
 func GenerateWebpProxy(absPath string) (string, error) {
 
-	img, err := vips.NewImageFromFile(absPath)
+	file_i, err := os.Open(absPath)
+
+	img, err := vips.NewImageFromReader(file_i)
 	if err != nil {
 		return "", err
 	}
-
-	buf, _, err := img.ExportWebp(nil)
 
 	if err != nil {
 		return "", err
@@ -31,9 +31,18 @@ func GenerateWebpProxy(absPath string) (string, error) {
 	filePath = filepath.Join(os.TempDir(), filePath)
 
 	// 0600: file can be RW by owner
-	err = os.WriteFile(filePath, buf, 0600)
+	file_o, err := os.Create(filePath)
 	if err != nil {
 		return "", err
 	}
+
+	err = img.SaveToWriterWebp(file_o, nil)
+	if err != nil {
+		return "", err
+	}
+
+	file_i.Close()
+	file_o.Close()
+
 	return filePath, nil
 }
