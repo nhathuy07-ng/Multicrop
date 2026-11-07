@@ -16,15 +16,17 @@ the frontend.
 func GenerateWebpProxy(absPath string) (string, error) {
 
 	file_i, err := os.Open(absPath)
+	if err != nil {
+		return "", err
+	}
 
 	img, err := vips.NewImageFromReader(file_i)
 	if err != nil {
 		return "", err
 	}
 
-	if err != nil {
-		return "", err
-	}
+	// Correcting image orientation (if needed)
+	img.AutoRotate()
 
 	// Create temp file
 	filePath := fmt.Sprintf("%d.%s", time.Now().Unix(), "webp")
@@ -36,7 +38,7 @@ func GenerateWebpProxy(absPath string) (string, error) {
 		return "", err
 	}
 
-	err = img.SaveToWriterWebp(file_o, nil)
+	err = img.SaveToWriterWebp(file_o, &vips.WebpExportParams{Keep: vips.ForeignKeepAll})
 	if err != nil {
 		return "", err
 	}
