@@ -25,7 +25,8 @@ func main() {
 		Width:  850,
 		Height: 600,
 		AssetServer: &assetserver.Options{
-			Assets: assets,
+			Assets:  assets,
+			Handler: &ImageLoader{},
 		},
 		OnStartup: app.startup,
 		Bind: []interface{}{
