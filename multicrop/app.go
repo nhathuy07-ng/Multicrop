@@ -43,7 +43,10 @@ func (a *App) startup(ctx context.Context) {
 
 	a.ctx = ctx
 	runtime.EventsOn(ctx, "wails:file-drop", func(optionalData ...any) {
+		runtime.MessageDialog(ctx, runtime.MessageDialogOptions{
+			Type:    runtime.InfoDialog,
+			Message: "file dropped",
+		})
 		onFileDropped(a, optionalData)
 	})
-
 }
