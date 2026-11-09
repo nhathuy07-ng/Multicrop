@@ -1,1 +1,2 @@
 *.nsi -linguistic-detectable
+multicrop/frontend/wailsjs/**/* linguist-vendored
